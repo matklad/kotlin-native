@@ -187,7 +187,7 @@ internal val FunctionDescriptor.symbolName: String
         val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
             if (it.isRoot) "" else "$it."
         }
-        return "kfun:$containingDeclarationPart$functionName"
+        return "kfun:$containingDeclarationPart$functionName".toCSafeString()
     }
 
 internal val PropertyDescriptor.symbolName: String
@@ -244,3 +244,21 @@ internal val ClassDescriptor.objectInstanceFieldSymbolName: String
 
 internal val ClassDescriptor.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
+
+fun String.toCSafeString(): String {
+    val table = """
+        ( lp
+        ) rp
+        < la
+        > ra
+        : c
+        + p
+        - m
+        . d
+    """
+    var result = this
+    for ((x, y) in table.trim().lines().map { it.trim().split(' ') }) {
+        result = result.replace(x, y)
+    }
+    return result
+}
