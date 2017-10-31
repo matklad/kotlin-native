@@ -53,4 +53,22 @@ class LldbTests {
             (unsigned char) d = 'c'
             (void) e = <Unable to determine byte size.>
     """)
+
+    @Test
+    fun `can step over code with inline functions`() = lldbTest("""
+        fun main(args: Array<String>) {
+            val xs = listOf(1, 2, 3)
+            xs.forEach { x ->
+                println(x)
+            }
+        }
+    """, """
+        > b main.kt:2
+        > r
+        [..] program.kexe`kfun:main [..] at main.kt:2
+        > n
+        [..] program.kexe`kfun:main [..] at main.kt:5
+        > n
+        [..] program.kexe`kfun:main [..] at main.kt:2015
+    """)
 }
